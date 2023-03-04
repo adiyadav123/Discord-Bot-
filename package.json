@@ -1,0 +1,21 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Isey",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^8.1.0",
+    "canvacord": "^5.4.8",
+    "deepai": "^1.0.21",
+    "discord.js": "^14.7.1",
+    "mongoose": "^6.9.1",
+    "openai": "^3.1.0",
+    "quick.db": "^9.0.8",
+    "undici": "^5.18.0"
+  }
+}
