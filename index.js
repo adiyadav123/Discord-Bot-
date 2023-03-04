@@ -27,8 +27,8 @@ client.once('ready', async () => {
     }
 
     try {
-        // client.user.setActivity({ name: ` ${client.guilds.cache.size} servers!`, type: ActivityType.Watching })
-        client.user.setActivity({ name: 'Under Construction', type: ActivityType.Watching })
+        client.user.setActivity({ name: ` ${client.guilds.cache.size} servers!`, type: ActivityType.Watching })
+        
 
     } catch (error) {
         console.error(error);
