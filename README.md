@@ -1,4 +1,5 @@
 # Hey 👋 Welcome to my repository.
+> Invite my bot to your server - https://discord.com/api/oauth2/authorize?client_id=1066394215107543061&permissions=8&scope=bot
 > This is a multitasking bot
 > You can use it for both fun and moderating
 > I will be adding more moderating and entertaining commands so stay close to my repository and follow me on GitHub.
@@ -34,6 +35,6 @@ client.user.setUsername('username');
 // For it's avatar
 client.user.setAvatar('URL or path');
 ```
-> And still if you are getting erorrs or not able to get ap keys so contact me on discord.
+> And still if you are getting erorrs or not able to get api keys so contact me on discord.
 ### Discord server url - https://discord.gg/hCpYyjDVGD
 >Thanks 💖
