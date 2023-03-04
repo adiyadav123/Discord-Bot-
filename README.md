@@ -27,7 +27,7 @@ npm i canvacord
 npm i deepai
 ```
 > 2. You need to update the `config.json` file.
-> 3. You need to create an app using `DiscoThe rd developer portal`.(If you don't know how to create an app in `Discord Developer portal` I recommend you to search on youtube).
+> 3. You need to create an app using `Discord Developer portal`.(If you don't know how to create an app in `Discord Developer portal` I recommend you to search on youtube).
 > 4. If you want to update the bot's name and its avatar so copy and paste this code into line `31` of the `index.js` file.
 ```
 // For bot's username
