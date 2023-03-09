@@ -27,8 +27,8 @@ client.once('ready', async () => {
     }
 
     try {
-        client.user.setActivity({ name: ` ${client.guilds.cache.size} servers!`, type: ActivityType.Watching })
-        
+        // client.user.setActivity({ name: ` ${client.guilds.cache.size} servers!`, type: ActivityType.Watching })
+        client.user.setActivity({ name: 'Under Construction', type: ActivityType.Watching })
 
     } catch (error) {
         console.error(error);
@@ -188,187 +188,126 @@ client.on("messageCreate", async (message) => {
         }
     }
 })
-// client.on(Events.InteractionCreate, async interaction => {
-//     if(interaction.isButton) return;
-//     if(interaction.isChatInputCommand) return;
 
-//     const modal = new ModalBuilder()
-//     .setTitle('provide us your information')
-//     .setCustomId('modal')
+const modSchema = require('./Schemas.js/mod');
 
-//     const email = new TextInputBuilder()
-//     .setCustomId('email')
-//     .setRequired(true)
-//     .setLabel("Email")
-//     .setPlaceholder("Enter your email here!")
-//     .setStyle(TextInputStyle.Short)
+client.on(Events.MessageCreate, async message => {
+    if(message.author.bot) return;
+    console.log('connected kid')
 
-//     const username = new TextInputBuilder()
-//     .setCustomId('username')
-//     .setRequired(true)
-//     .setLabel("Username")
-//     .setPlaceholder("Enter your username here!")
-//     .setStyle(TextInputStyle.Short)
+    const gu = '1055079934135107694';
+    const guild = client.guilds.cache.get(gu);
+    if (message.channel.type == ChannelType.DM){
+        const member = message.author
+        console.log('connected')
+        member.send('Your modmail conversation has been started').catch(err =>{ 
+            console.log(err)
+            return;
+        });
 
-//     const reason = new TextInputBuilder()
-//     .setCustomId('reason')
-//     .setRequired(true)
-//     .setLabel("Reason")
-//     .setPlaceholder("Reason for opening ticket")
-//     .setStyle(TextInputStyle.Paragraph)
+        modSchema.findOne({ Guild: guild.id, User: member }, async (err, data) => {
+            if(err) throw err;
 
-//     const first = new ActionRowBuilder().addComponents(email);
-//     const second = new ActionRowBuilder().addComponents(username);
-//     const third = new ActionRowBuilder().addComponents(reason);
+            if(!data){
+                modSchema.create({
+                    Guild: guild.id,
+                    User: member.id
+                })
+            }
+            if(data){
+                modSchema.create({
+                    Guild: guild.id,
+                    User: member.id
+                })
+            }
+        });
+        if(message.attachments.size > 0){
+            message.react('❎')
+            return message.reply('I cannot send this message!')
+        }
+        const posChannel = guild.channels.cache.find(c => c.name === `${message.author.id}`);
+        if(posChannel){
+            const embed = new EmbedBuilder()
+            .setColor("Blue")
+            .setAuthor({ name: `${message.author.username}`, iconURL: `${message.author.displayAvatarURL()}` })
+            .setDescription(`${message.content}`)
 
-//     modal.addComponents(first, second, third);
+            posChannel.send({ embeds: [embed] });
+            message.react('📩');
+            return;
+        }
+        const category = guild.channels.cache.get('1080909472773451898');
+        const channel = await guild.channels.create({
+            name: `mail-${message.author.username}`,
+            type: ChannelType.GuildText,
+            parent: category,
+            topic: `A mail send by - ${message.author.username}`
+        });
+        const embed = new EmbedBuilder()
+        .setColor("Blue")
+        .setDescription(`${message.content}`)
+        .setTitle('New Mail')
+        .setAuthor({ name: `${message.author.username}`, iconURL: `${message.author.displayAvatarURL()}` })
 
-// let choices;
-//     choices = interaction.values;
-//     const result = choices.join('');
-//     ticketSchema.findOne({ Guild: interaction.guild.id }, async (err, data) => {
-//         const filter = { Guild: interaction.guild.id };
-//         const update = { Ticket: result };
+        const button = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+            .setCustomId('button')
+            .setLabel('Close Mail')
+            .setEmoji('❎')
+            .setStyle(ButtonStyle.Danger)
+        )
 
-//         ticketSchema.updateOne(filter, update, {
-//             new: true
-//         }).then(value => {
-//             console.log(value);
-//         })
-//     })
+        const m = await channel.send({ embeds: [embed], components: [button] });
 
-//     if(!interaction.isModalSubmit()){
-//         interaction.showModal(modal);
-//     }
-//     // interaction.showModal(modal)
-// });
+        const collector = m.createMessageComponentCollector();
 
-// 
-const ticketSchema = require('./Schemas.js/ticket-schema');
-client.on(Events.InteractionCreate, async interaction => {
-    if (interaction.isStringSelectMenu()) {
-        console.log("passed")
-
-        // const modal = new ModalBuilder()
-        //     .setTitle('provide us your information')
-        //     .setCustomId('modal')
-
-        // const email = new TextInputBuilder()
-        //     .setCustomId('email')
-        //     .setRequired(true)
-        //     .setLabel("Email")
-        //     .setPlaceholder("Enter your email here!")
-        //     .setStyle(TextInputStyle.Short)
-
-        // const username = new TextInputBuilder()
-        //     .setCustomId('username')
-        //     .setRequired(true)
-        //     .setLabel("Username")
-        //     .setPlaceholder("Enter your username here!")
-        //     .setStyle(TextInputStyle.Short)
-
-        // const reason = new TextInputBuilder()
-        //     .setCustomId('reason')
-        //     .setRequired(true)
-        //     .setLabel("Reason")
-        //     .setPlaceholder("Reason for opening ticket")
-        //     .setStyle(TextInputStyle.Paragraph)
-
-        // const first = new ActionRowBuilder().addComponents(email);
-        // const second = new ActionRowBuilder().addComponents(username);
-        // const third = new ActionRowBuilder().addComponents(reason);
-
-        // modal.addComponents(first, second, third);
-
-        let choices;
-        choices = interaction.values;
-        const result = choices.join('');
-        ticketSchema.findOne({ Guild: interaction.guild.id }, async (err, data) => {
-            const filter = { Guild: interaction.guild.id };
-            const update = { Ticket: result };
-
-            ticketSchema.updateOne(filter, update, {
-                new: true
-            }).then(value => {
-                console.log(value);
-            })
-        })
-
-        // if (!interaction.isModalSubmit()) {
-        //     await interaction.showModal(modal);
-        // }
+        collector.on('collect', async i => {
+            if(i.customId == 'button'){
+                await channel.delete()
+                member.send(`Your mail has been closed in ${guild.name} by a moderator`);
+            }
+        });
+        m.pin()
+        message.react('📩')
     }
-// })
+});
+client.on(Events.MessageCreate, async (message) => {
+    if(message.author.bot) return;
+    if(message.author.id === message.guild.ownerId) return;
+    const author = message.author;
+    
+    const ms = message.content;
+    // console.log(ms.length)
+    if(ms.length > 75){
+        message.reply(`${message.author.username}, you do not have permission to send messages greater than 75 characters.`)
+        message.author.send(`${message.author.username}, your message was deleted because it was greater than 75 characters.\nIf you want to send long messages contact to the moderators or owner of ${message.guild.name}`)
+        message.delete();
+}})
 
-// client.on(Events.InteractionCreate, async interaction => {
-//     if (interaction.isModalSubmit()) {
-//         if (interaction.customId === 'modal') {
-            ticketSchema.findOne({ Guild: interaction.guild.id }, async (err, data) => {
-                // const emailinput = interaction.fields.getTextInputValue('email');
-                // const userinput = interaction.fields.getTextInputValue('username');
-                // const reasoninput = interaction.fields.getTextInputValue('reason');
+client.on("messageCreate", async message => {
+    console.log('read')
+    if(message.content == '$ping'){
+        message.reply(`Websocket heartbeat: ${client.ws.ping}ms.`)
+    }
+})
+const linkSchema = require('./Schemas.js/link')
+client.on(Events.MessageCreate, async message => {
+    if(message.content.startsWith('http') || message.content.startsWith('discord.gg') || message.content.startsWith('https://') || message.content.includes('https://') || message.content.includes('discord.gg/')){
+        const Data = await linkSchema.findOne({ Guild: message.guild.id });
+        if(!Data) return;
 
-                const poschannel = interaction.guild.channels.cache.get(c => c.name === `ticket-${interaction.user.id}`);
-                if (poschannel) await interaction.reply({ content: `You already have a ticket opened -${poschannel}`, ephemeral: true });
-                const category = data.Channel;
+        const memberPerms = Data.Perms;
+        const user = message.author;
+        const member = message.guild.members.cache.get(user.id);
 
-                const embed = new EmbedBuilder()
-                    .setColor("Blue")
-                    .setDescription('Welcome to your ticket, please wait while the staffs review your information')
-                    .setTitle(`${interaction.user.username}'s ticket`)
-                    .addFields(
-                    //     { name: "Email", value: `${emailinput}` },
-                    //     { name: "Username", value: `${userinput}` },
-                    //     { name: "Reason", value: `${reasoninput}` },
-                        { name: "Type", value: `${data.Ticket}` }
-                    )
-                    .setFooter({ text: `${interaction.guild.name}` })
+        if(member.permissions.has(memberPerms)) return;
 
-                const butt = new ActionRowBuilder()
-                    .addComponents(
-                        new ButtonBuilder()
-                            .setCustomId('ticket')
-                            .setLabel('❎ Delete')
-                            .setStyle(ButtonStyle.Danger)
-                    )
-
-                let channel = await interaction.guild.channels.create({
-                    name: `ticket-${interaction.user.username}`,
-                    type: ChannelType.GuildText,
-                    parent: `${category}`,
-                    permissionOverwrites: [
-                        {
-                            id: interaction.guild.id,
-                            deny: [PermissionsBitField.Flags.ViewChannel],
-                        },
-                        {
-                            id: interaction.user.id,
-                            allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel],
-                        },
-                    ],
-                });
-                const user = interaction.user;
-
-
-                let msg = await channel.send({ embeds: [embed], components: [butt] });
-                const collector = msg.createMessageComponentCollector();
-
-                collector.on("collect", async i => {
-                    ; (channel).delete();
-
-                    const dmembed = new EmbedBuilder()
-                        .setColor("Blue")
-                        .setDescription('Thanks for contacting us, if you have another problem feel free to create another ticket')
-                        .setTitle(`Your ticket has been successfully deleted`)
-                        .setFooter({ text: `${interaction.guild.name}` })
-                        .setTimestamp()
-
-                    await interaction.member.send({ embeds: [dmembed] }).catch(err => {
-                        return;
-                    })
-                });
+        else{
+            await message.channel.reply({ content: `${message.author}, you do not have perms to send links in this channel!` }).attachments(msg => {
+                setTimeout( () => msg.delete(), 3000)
             })
-//         }
-//     }
-
+            ;(await message).delete();
+        }
+    }
 })
