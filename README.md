@@ -25,6 +25,12 @@ npm i better-sqlite3
 npm i canvacord
 // Nineth
 npm i deepai
+// tenth 
+npm i canvas
+// 11th
+npm i discord-giveaways
+// 12th
+npm i discord-gamecord
 ```
 > 2. You need to update the `config.json` file.
 > 3. You need to create an app using `Discord Developer portal`.(If you don't know how to create an app in `Discord Developer portal` I recommend you to search on youtube).
